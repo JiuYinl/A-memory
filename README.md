@@ -2,7 +2,7 @@
 
   
 
-一个**非常好看**的可视化AI聊天记录本地离线工具。
+一个**非常好看**的可视化AI聊天记录本地离线工具。可以用于整理chatGPT、Claude等AI聊天记录（json）
 
 A beautiful, offline-first visualization tool for your ChatGPT/Claude data.
 

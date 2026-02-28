@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Galaxy - Expanded</title>
+    <title>Memory Galaxy - Multi-Import Support</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,14 +23,16 @@
             --text-primary: #e2e8f0;
             --text-secondary: #94a3b8;
             
-            /* 对话框 */
-            --modal-bg: rgba(10, 10, 15, 0.9);
+            --modal-bg: rgba(10, 10, 15, 0.95);
             --modal-border: rgba(100, 200, 255, 0.2);
             --modal-shadow: 0 0 50px rgba(0, 50, 150, 0.2);
             
             --accent-color: #ffffff; 
             --dot-user: #ffffff;
             --dot-bot: #ffffff;
+            
+            --code-bg: rgba(255, 255, 255, 0.05);
+            --inline-code-bg: rgba(255, 255, 255, 0.15);
         }
 
         [data-theme="day"] {
@@ -44,14 +46,16 @@
             --text-primary: #334155;
             --text-secondary: #64748b;
             
-            /* 对话框 */
-            --modal-bg: rgba(255, 255, 255, 0.9);
+            --modal-bg: rgba(255, 255, 255, 0.95);
             --modal-border: #e2e8f0; 
             --modal-shadow: 0 20px 50px rgba(200, 100, 200, 0.1);
             
             --accent-color: #000000; 
             --dot-user: #000000;
             --dot-bot: #000000;
+
+            --code-bg: rgba(0, 0, 0, 0.04);
+            --inline-code-bg: rgba(0, 0, 0, 0.06);
         }
 
         body, html {
@@ -78,7 +82,6 @@
         }
         canvas:active { cursor: grabbing; }
 
-        /* --- UI 层 --- */
         #ui-layer {
             position: absolute;
             top: 0;
@@ -90,7 +93,7 @@
         }
         .interactive { pointer-events: auto; }
 
-        /* --- 模态框 (Modal) --- */
+        /* --- 模态框 --- */
         #chat-modal, #name-modal {
             position: absolute;
             top: 0;
@@ -127,7 +130,7 @@
         }
         
         .chat-content-wrapper {
-             width: 85%;
+            width: 85%;
             max-width: 900px;
             height: 85%;
         }
@@ -142,15 +145,13 @@
             transform: scale(1) translateY(0);
         }
 
-        /* 聊天区域 */
         #chat-scroll-area {
             flex: 1;
             overflow-y: auto;
-            padding: 60px 80px;
+            padding: 40px 60px;
             scroll-behavior: smooth;
         }
         
-        /* 隐藏名字模式 CSS */
         #chat-scroll-area.hide-names .message-name {
             display: none;
         }
@@ -160,7 +161,7 @@
             .chat-content-wrapper { width: 95%; height: 90%; }
         }
 
-        /* --- 消息行 (纯净版) --- */
+        /* --- 消息行 --- */
         .message-row {
             display: flex;
             gap: 20px;
@@ -180,13 +181,14 @@
             height: 8px;
             border-radius: 50%;
             flex-shrink: 0;
-            margin-top: 24px; /* Align with text roughly */
+            margin-top: 24px;
         }
 
         .message-container {
             display: flex;
             flex-direction: column;
             max-width: 90%;
+            min-width: 0; 
         }
 
         .message-name {
@@ -202,57 +204,106 @@
             font-size: 1.05rem;
             line-height: 1.7;
             color: var(--text-primary);
-            font-weight: 400;
         }
         
-        /* AI 样式 (左对齐) */
         .message-row.assistant { flex-direction: row; }
         .message-row.assistant .role-dot {
             background-color: var(--dot-bot);
-            border: 2px solid var(--dot-bot);
             box-shadow: 0 0 10px var(--dot-bot);
         }
-        .message-row.assistant .message-container { align-items: flex-start; }
-        .message-row.assistant .message-name { text-align: left; }
 
-         /* user 样式 (右对齐) */
         .message-row.user { flex-direction: row-reverse; }
         .message-row.user .role-dot {
             background-color: var(--dot-user);
             box-shadow: 0 0 10px var(--dot-user);
         }
         .message-row.user .message-container { align-items: flex-end; }
-        .message-row.user .message-content { text-align: right; }
         .message-row.user .message-name { text-align: right; }
 
+        /* --- Markdown 样式 --- */
+        .markdown-body {
+            font-size: 1rem;
+            width: 100%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
 
-        /* Markdown */
-        .markdown-body p { margin-bottom: 1.5em; }
-        .markdown-body strong { color: var(--accent-color); font-weight: 600; }
-        .markdown-body code {
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-            background: rgba(150, 150, 150, 0.15);
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        .markdown-body pre {
-            background: rgba(0,0,0,0.03);
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 20px 0;
-            border: 1px solid var(--modal-border);
-            text-align: left; /* Ensure code blocks align left even in user messages if preferred, or inherit */
-        }
-        .message-row.user .markdown-body pre { text-align: left; } /* Keep code readable */
+        .markdown-body p { margin-bottom: 1em; }
         
-        [data-theme="night"] .markdown-body pre { background: rgba(255,255,255,0.05); }
+        .markdown-body strong, 
+        .markdown-body b { 
+            font-weight: 800 !important; 
+            color: inherit;
+        }
+        
+        .markdown-body em, .markdown-body i { font-style: italic !important; }
+        
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 { 
+            font-weight: 700 !important; 
+            margin: 1.5em 0 0.5em 0; 
+            line-height: 1.2; 
+        }
+        .markdown-body h1 { font-size: 1.8em; }
+        .markdown-body h2 { font-size: 1.5em; }
+        .markdown-body h3 { font-size: 1.25em; }
+        
+        .markdown-body ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 1em; }
+        .markdown-body ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 1em; }
+        .markdown-body li { display: list-item !important; margin-bottom: 0.25em; }
+        
+        .markdown-body blockquote { 
+            border-left: 4px solid var(--modal-border); 
+            padding: 0.5em 0 0.5em 1em; 
+            color: var(--text-secondary); 
+            margin: 1em 0;
+            background: rgba(127,127,127,0.05);
+        }
+
+        .markdown-body :not(pre) > code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9em;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            background-color: var(--inline-code-bg) !important;
+            color: var(--accent-color) !important;
+            word-break: break-all;
+        }
+
+        .code-wrapper {
+            position: relative;
+            margin: 1.5em 0;
+            border: 1px solid var(--modal-border);
+            border-radius: 8px;
+            background-color: var(--code-bg);
+            overflow: hidden;
+        }
+        
+        .code-wrapper pre {
+            margin: 0;
+            padding: 1.5em;
+            padding-top: 2.5em;
+            overflow-x: hidden; 
+            white-space: pre-wrap !important; 
+            word-wrap: break-word !important; 
+            color: var(--text-primary);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .code-lang {
+            position: absolute;
+            top: 0.5em;
+            right: 1em;
+            font-size: 0.7em;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            text-transform: lowercase;
+        }
 
         #chat-scroll-area::-webkit-scrollbar { width: 5px; }
         #chat-scroll-area::-webkit-scrollbar-thumb { background: var(--text-secondary); opacity: 0.3; border-radius: 10px; }
 
-        /* 上传页 */
         #upload-screen {
             display: flex;
             flex-direction: column;
@@ -273,7 +324,6 @@
             max-width: 450px;
         }
         
-        /* Input Styling */
         .name-input {
             width: 100%;
             background: rgba(0,0,0,0.1);
@@ -283,10 +333,6 @@
             border-radius: 8px;
             margin-bottom: 15px;
             outline: none;
-            transition: border-color 0.3s;
-        }
-        .name-input:focus {
-            border-color: var(--accent-color);
         }
         [data-theme="night"] .name-input { background: rgba(255,255,255,0.05); }
 
@@ -297,32 +343,24 @@
     <canvas id="galaxy-canvas"></canvas>
 
     <div id="ui-layer">
-        <!-- 顶部栏 -->
         <div id="toolbar" class="absolute top-0 left-0 w-full p-6 flex justify-between items-center opacity-0 transition-opacity duration-500" style="pointer-events: none;">
             <div class="interactive flex items-center gap-4">
-                <h1 class="text-xl font-bold tracking-widest opacity-80" style="font-family: var(--font-stack)">MEMORY CLOUD</h1>
+                <h1 class="text-xl font-bold tracking-widest opacity-80">MEMORY CLOUD</h1>
             </div>
             
             <div class="interactive flex gap-4 items-center">
-                <!-- 搜索栏 -->
                 <div class="relative group">
                     <input type="text" id="search-box" placeholder="Search Memory..." class="bg-transparent border-b border-[var(--text-secondary)] px-2 py-1 text-sm focus:outline-none focus:border-[var(--accent-color)] transition w-48 text-right text-[var(--text-primary)] opacity-60 hover:opacity-100 placeholder-opacity-50">
-                    <i data-lucide="search" class="w-4 h-4 absolute right-0 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] pointer-events-none opacity-0 group-hover:opacity-0 transition"></i>
                 </div>
-                
-                <!-- 导入按钮 -->
                  <button onclick="openNameModal()" class="p-2 opacity-60 hover:opacity-100 transition rounded-full hover:bg-[var(--text-secondary)]/10" title="Import More">
                     <i data-lucide="upload-cloud" class="w-5 h-5"></i>
                 </button>
-
-                <!-- 主题按钮 -->
                 <button onclick="toggleTheme()" class="p-2 opacity-60 hover:opacity-100 transition rounded-full hover:bg-[var(--text-secondary)]/10">
                     <i data-lucide="moon" id="theme-icon"></i>
                 </button>
             </div>
         </div>
 
-        <!-- 初始上传界面 -->
         <div id="upload-screen">
             <div class="upload-card interactive">
                 <div class="mb-6 flex justify-center">
@@ -332,7 +370,6 @@
                 </div>
                 <h2 class="text-2xl font-bold mb-2 tracking-wide text-[var(--text-primary)]">量子记忆云</h2>
                 <p class="text-sm text-[var(--text-secondary)] mb-8">Ready to Initialize</p>
-                
                 <button onclick="openNameModal()" class="px-8 py-3 rounded-lg border border-[var(--modal-border)] hover:bg-[var(--accent-color)]/10 hover:border-[var(--accent-color)] transition text-sm font-bold tracking-widest uppercase text-[var(--text-primary)]">
                     Load Data
                 </button>
@@ -340,17 +377,13 @@
         </div>
     </div>
 
-    <!-- 名字输入模态框 -->
     <div id="name-modal">
         <div class="name-modal-wrapper interactive" onclick="event.stopPropagation()">
             <h3 class="text-xl font-bold mb-6 text-[var(--text-primary)] text-center">Identity Configuration</h3>
-            
             <label class="block text-xs text-[var(--text-secondary)] mb-2 uppercase tracking-wider">AI Name</label>
-            <input type="text" id="ai-name-input" class="name-input" placeholder="e.g. Claude, GPT，etc.">
-            
+            <input type="text" id="ai-name-input" class="name-input" placeholder="e.g. GPT-4o,Claude">
             <label class="block text-xs text-[var(--text-secondary)] mb-2 uppercase tracking-wider">User Name</label>
             <input type="text" id="user-name-input" class="name-input" placeholder="e.g. User">
-            
             <div class="flex justify-end gap-3 mt-4">
                 <button onclick="closeNameModal()" class="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Cancel</button>
                 <button onclick="confirmNameAndSelectFile()" class="px-6 py-2 rounded bg-[var(--accent-color)]/10 border border-[var(--modal-border)] text-[var(--text-primary)] text-sm font-bold hover:bg-[var(--accent-color)]/20 transition">
@@ -360,21 +393,16 @@
         </div>
     </div>
 
-    <!-- 隐藏的文件输入 -->
     <input type="file" id="file-input" accept=".json" hidden>
 
-    <!-- 对话框 -->
     <div id="chat-modal">
         <div class="chat-content-wrapper interactive" onclick="event.stopPropagation()">
-            <!-- 头部 -->
             <div class="p-6 border-b border-[var(--modal-border)] flex justify-between items-center bg-transparent z-10">
                 <div class="flex-1 min-w-0 mr-4">
                     <h2 id="modal-title" class="text-xl font-bold truncate text-[var(--text-primary)]">Untitled</h2>
                     <p id="modal-date" class="text-xs text-[var(--text-secondary)] mt-1 tracking-widest">LOADING...</p>
                 </div>
-                
                 <div class="flex items-center gap-6">
-                    <!-- Name Toggle -->
                     <div class="flex items-center gap-2" title="Toggle Name Display">
                         <span class="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] hidden sm:block">Names</span>
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -382,23 +410,32 @@
                             <div class="w-8 h-4 bg-[var(--text-secondary)]/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[var(--accent-color)]"></div>
                         </label>
                     </div>
-
                     <button onclick="closeModal()" class="p-2 rounded-full hover:bg-[var(--text-secondary)]/10 transition">
                         <i data-lucide="x" class="w-6 h-6 text-[var(--text-primary)]"></i>
                     </button>
                 </div>
             </div>
-            <!-- 内容 -->
             <div id="chat-scroll-area"></div>
         </div>
     </div>
 
     <script>
+        // --- Marked Configuration ---
+        const renderer = new marked.Renderer();
+        renderer.code = function(code, infostring) {
+            const lang = (infostring || '').match(/\S*/)[0];
+            const content = typeof code === 'string' ? code : code.text;
+            const escapedContent = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const langLabel = lang ? `<div class="code-lang">${lang}</div>` : '';
+            return `<div class="code-wrapper">${langLabel}<pre><code class="language-${lang}">${escapedContent}</code></pre></div>`;
+        };
+        marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
+
         // --- 核心配置 ---
         const CONFIG = {
-            baseRepulsion: 80,
+            baseRepulsion: 120, // 稍微增加斥力，让导入更多文件时不会太挤
             zoomExtent: [0.1, 8],
-            cloudRadiusMult: 4,
+            cloudRadiusMult: 4.5,
             particlesPerNode: 15,
             labelFadeStart: 1.5,
             labelFadeFull: 3.0
@@ -432,25 +469,20 @@
         let transform = d3.zoomIdentity;
         let activeNode = null;
         let targetNode = null;
-        let isNameVisible = true; // 默认显示名字
-
-        // 临时存储输入的名字
+        let isNameVisible = true;
         let tempAIName = "";
         let tempUserName = "";
 
         const canvas = document.getElementById('galaxy-canvas');
         const ctx = canvas.getContext('2d');
-
         lucide.createIcons();
 
-        // --- D3 Zoom ---
         const zoomBehavior = d3.zoom()
             .scaleExtent(CONFIG.zoomExtent)
             .on("zoom", (e) => { transform = e.transform; });
 
         d3.select(canvas).call(zoomBehavior).on("dblclick.zoom", null);
 
-        // --- 初始化 ---
         function init() {
             resize();
             window.addEventListener('resize', resize);
@@ -468,7 +500,6 @@
             }
         }
 
-        // --- 名字输入与文件处理逻辑 ---
         const fileInput = document.getElementById('file-input');
         const uploadScreen = document.getElementById('upload-screen');
         const toolbar = document.getElementById('toolbar');
@@ -476,16 +507,8 @@
         const aiNameInput = document.getElementById('ai-name-input');
         const userNameInput = document.getElementById('user-name-input');
 
-        function openNameModal() {
-            // 清空输入框或保留上次的值? 保留比较方便
-            // aiNameInput.value = '';
-            // userNameInput.value = '';
-            nameModal.classList.add('active');
-        }
-
-        function closeNameModal() {
-            nameModal.classList.remove('active');
-        }
+        function openNameModal() { nameModal.classList.add('active'); }
+        function closeNameModal() { nameModal.classList.remove('active'); }
 
         function confirmNameAndSelectFile() {
             tempAIName = aiNameInput.value.trim() || "AI";
@@ -496,23 +519,7 @@
 
         fileInput.addEventListener('change', (e) => {
             handleFile(e.target.files[0]);
-            // 重置 input value 使得同一文件可以被再次触发 change
             e.target.value = ''; 
-        });
-
-        // 拖拽暂不支持名字输入，这里简化处理：拖拽直接使用默认名字，或弹窗提示不支持拖拽
-        // 为了体验一致性，拦截拖拽并弹窗
-        document.body.addEventListener('dragover', e => e.preventDefault());
-        document.body.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if(e.dataTransfer.files.length) {
-                // 拖拽触发时先存文件引用，再弹窗
-                const file = e.dataTransfer.files[0];
-                // 这里的逻辑稍微复杂，为了简化，我们假设拖拽直接触发弹窗，确认后读文件
-                // 更好的做法是：存 file -> openModal -> confirm -> process(file)
-                // 这里为了简单，直接触发 openNameModal，让用户手动选文件
-                alert("Please click 'Load Data' or the Import button to select files.");
-            }
         });
 
         function handleFile(file) {
@@ -521,9 +528,7 @@
             reader.onload = (e) => {
                 try {
                     const json = JSON.parse(e.target.result);
-                    // 传入当前输入的名字
                     processData(json, tempAIName, tempUserName);
-                    
                     if (uploadScreen.style.display !== 'none') {
                         uploadScreen.style.opacity = 0;
                         setTimeout(() => {
@@ -532,202 +537,135 @@
                             toolbar.style.pointerEvents = 'auto';
                         }, 500);
                     }
-                } catch (err) {
-                    alert('JSON解析失败: ' + err);
-                }
+                } catch (err) { alert('JSON解析失败: ' + err); }
             };
             reader.readAsText(file);
         }
 
-        // --- 数据处理 ---
         function processData(data, aiName, userName) {
-            if (!Array.isArray(data)) {
-                alert("Format invalid: Expected JSON Array");
-                return;
-            }
-
-            const newNodes = data.filter(c => c.mapping || c.chat_messages).map((chat, i) => {
+            // 确保 data 是数组
+            const rawArray = Array.isArray(data) ? data : [data];
+            
+            const newNodes = rawArray.filter(c => {
+                // 增强判定：只要有 mapping (GPT) 或 chat_messages (Claude) 就通过
+                return c.mapping || (c.chat_messages && Array.isArray(c.chat_messages)) || c.messages;
+            }).map((chat, i) => {
                 let id, title, rawDate, sizeScore;
                 
-                // 1. ChatGPT 格式识别
-                if (chat.mapping) {
+                if (chat.mapping) { // ChatGPT
                     id = chat.id || chat.conversation_id;
                     title = chat.title || "Untitled Conversation";
                     rawDate = chat.create_time;
                     sizeScore = Object.keys(chat.mapping).length;
-                } 
-                // 2. Claude 格式识别
-                else if (chat.chat_messages) {
-                    id = chat.uuid;
-                    title = chat.name || "Untitled Conversation";
-                    rawDate = chat.created_at;
-                    sizeScore = chat.chat_messages.length * 2.5; // Claude 只有消息列表，乘以系数使其与 GPT 树结构大小观感近似
+                } else if (chat.chat_messages || chat.messages) { // Claude (不同导出版本可能叫 messages)
+                    const msgs = chat.chat_messages || chat.messages;
+                    id = chat.uuid || chat.id;
+                    title = chat.name || chat.title || "Untitled Conversation";
+                    rawDate = chat.created_at || chat.create_time;
+                    sizeScore = msgs.length * 3;
                 }
 
-                // 统一时间戳 (秒)
-                let dateVal;
-                if (typeof rawDate === 'number') {
-                    dateVal = rawDate;
-                } else if (typeof rawDate === 'string') {
-                    dateVal = new Date(rawDate).getTime() / 1000;
-                } else {
-                    dateVal = Date.now() / 1000;
-                }
-
-                const r = Math.min(Math.max(sizeScore / 8, 2), 6);
+                let dateVal = typeof rawDate === 'number' ? (rawDate > 1e11 ? rawDate/1000 : rawDate) : (new Date(rawDate).getTime() / 1000 || Date.now() / 1000);
+                const r = Math.min(Math.max(sizeScore / 8, 2.5), 7);
                 
-                const cloudParticles = [];
-                for(let j=0; j<CONFIG.particlesPerNode; j++) {
-                    const u1 = Math.random();
-                    const u2 = Math.random();
-                    const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
-                    const dist = Math.abs(z) * r * 1.5; 
+                const cloudParticles = Array.from({length: CONFIG.particlesPerNode}, () => {
+                    const dist = Math.abs(Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random())) * r * 1.5;
                     const angle = Math.random() * Math.PI * 2;
-                    cloudParticles.push({
-                        x: Math.cos(angle) * dist,
-                        y: Math.sin(angle) * dist,
-                        size: Math.random() * 1.2 + 0.3, 
-                        alpha: Math.random() * 0.5 + 0.2
-                    });
-                }
-
-                // 计算全局偏移，避免新节点直接重叠在旧节点上 (如果已经有节点)
-                let offsetX = width/2;
-                let offsetY = height/2;
-                if(nodes.length > 0) {
-                     offsetX += (Math.random() - 0.5) * 400;
-                     offsetY += (Math.random() - 0.5) * 400;
-                }
+                    return { x: Math.cos(angle) * dist, y: Math.sin(angle) * dist, size: Math.random() * 1.2 + 0.3, alpha: Math.random() * 0.5 + 0.2 };
+                });
 
                 return {
                     id: id || Math.random().toString(36),
-                    x: offsetX + (Math.random() - 0.5) * 200,
-                    y: offsetY + (Math.random() - 0.5) * 200,
+                    // 新星星产生在视图中心附近，防止飞出
+                    x: width/2 + (Math.random()-0.5)*100,
+                    y: height/2 + (Math.random()-0.5)*100,
                     r: r,
                     cloudParticles: cloudParticles,
                     title: title,
                     date: dateVal,
-                    chatData: chat, // 存储原始数据
-                    colorIndex: nodes.length + i, // 确保颜色分布
-                    customAIName: aiName,   // 绑定名字到节点
+                    chatData: chat,
+                    colorIndex: nodes.length + i,
+                    customAIName: aiName,
                     customUserName: userName
                 };
             });
-            
+
             if (newNodes.length === 0) {
-                alert("No valid conversations found. Please upload a standard ChatGPT or Claude JSON export.");
+                alert("未发现有效的对话数据，请确认是否为导出的 ChatGPT 或 Claude JSON 文件。");
                 return;
             }
 
-            // 追加节点而不是替换
+            // 追加节点
             nodes = nodes.concat(newNodes);
 
+            // 重新绑定或启动仿真
             if (!simulation) {
                 simulation = d3.forceSimulation(nodes)
                     .force("charge", d3.forceManyBody().strength(-CONFIG.baseRepulsion))
                     .force("center", d3.forceCenter(width / 2, height / 2))
-                    .force("collision", d3.forceCollide().radius(d => d.r * CONFIG.cloudRadiusMult * 0.5))
-                    .alphaDecay(0.02)
-                    .on("tick", () => {});
+                    .force("collision", d3.forceCollide().radius(d => d.r * CONFIG.cloudRadiusMult * 0.45))
+                    .alphaDecay(0.02);
             } else {
-                // 更新仿真数据并重启
                 simulation.nodes(nodes);
-                simulation.alpha(0.5).restart();
+                // 每次追加时给一点动力
+                simulation.alpha(0.6).restart();
             }
-                
+            
             canvas.addEventListener('click', onCanvasClick);
         }
 
-        // --- 渲染循环 ---
         function renderLoop() {
             ctx.clearRect(0, 0, width, height);
             ctx.save();
             ctx.translate(transform.x, transform.y);
             ctx.scale(transform.k, transform.k);
-
             const palette = PALETTE[currentTheme];
-            
-            // 计算标签透明度 (LOD Logic)
-            let labelAlpha = 0;
-            if (transform.k > CONFIG.labelFadeStart) {
-                labelAlpha = (transform.k - CONFIG.labelFadeStart) / (CONFIG.labelFadeFull - CONFIG.labelFadeStart);
-                labelAlpha = Math.min(Math.max(labelAlpha, 0), 1);
-            }
+            let labelAlpha = transform.k > CONFIG.labelFadeStart ? Math.min((transform.k - CONFIG.labelFadeStart) / (CONFIG.labelFadeFull - CONFIG.labelFadeStart), 1) : 0;
 
             nodes.forEach(node => {
                 const opacity = (activeNode && activeNode !== node) ? 0.1 : 1;
                 ctx.globalAlpha = opacity;
-
-                // 1. 电子云
                 const cloudRadius = node.r * CONFIG.cloudRadiusMult;
                 const gradient = ctx.createRadialGradient(node.x, node.y, node.r * 0.5, node.x, node.y, cloudRadius);
                 palette.cloudStops.forEach(stop => gradient.addColorStop(stop.pos, stop.color));
                 ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, cloudRadius, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.beginPath(); ctx.arc(node.x, node.y, cloudRadius, 0, Math.PI * 2); ctx.fill();
 
-                // 2. 粒子
                 if (transform.k > 0.4 || activeNode === node) {
                     ctx.fillStyle = palette.particle;
                     node.cloudParticles.forEach(p => {
                         ctx.globalAlpha = p.alpha * opacity;
-                        ctx.beginPath();
-                        ctx.arc(node.x + p.x, node.y + p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
+                        ctx.beginPath(); ctx.arc(node.x + p.x, node.y + p.y, p.size, 0, Math.PI * 2); ctx.fill();
                     });
                 }
-
-                // 3. 核心
                 ctx.globalAlpha = opacity;
                 ctx.fillStyle = palette.core[node.colorIndex % palette.core.length];
-                if(currentTheme === 'night') {
-                    ctx.shadowBlur = (targetNode === node) ? 30 : 15; // 搜索高亮
-                    ctx.shadowColor = ctx.fillStyle;
-                } else {
-                    ctx.shadowBlur = 0;
-                }
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.r * 0.8, 0, Math.PI * 2);
-                ctx.fill();
+                if(currentTheme === 'night') { ctx.shadowBlur = (targetNode === node) ? 30 : 15; ctx.shadowColor = ctx.fillStyle; }
+                ctx.beginPath(); ctx.arc(node.x, node.y, node.r * 0.8, 0, Math.PI * 2); ctx.fill();
                 ctx.shadowBlur = 0;
                 
-                // 4. 标题 (智能 LOD)
                 if (labelAlpha > 0 && !activeNode) {
                     ctx.globalAlpha = labelAlpha;
                     ctx.fillStyle = currentTheme === 'night' ? '#ccc' : '#555';
-                    ctx.font = '2.5px -apple-system, BlinkMacSystemFont, sans-serif'; // 世界坐标系字体要小
+                    ctx.font = '2.5px -apple-system, BlinkMacSystemFont, sans-serif';
                     ctx.textAlign = 'center';
                     ctx.fillText(node.title.substring(0, 15) + (node.title.length>15 ? '...' : ''), node.x, node.y + node.r * 2 + 3);
                 }
             });
-
             ctx.restore();
             requestAnimationFrame(renderLoop);
         }
 
-        // --- 交互逻辑 ---
         function onCanvasClick(e) {
             const clickX = (e.clientX - transform.x) / transform.k;
             const clickY = (e.clientY - transform.y) / transform.k;
-
             let clickedNode = null;
-            // 反向遍历，优先选中上层节点
             for (let i = nodes.length - 1; i >= 0; i--) {
                 const node = nodes[i];
-                const dx = clickX - node.x;
-                const dy = clickY - node.y;
-                if (dx*dx + dy*dy < (node.r * 4) * (node.r * 4)) {
-                    clickedNode = node;
-                    break;
-                }
+                const dx = clickX - node.x; const dy = clickY - node.y;
+                if (dx*dx + dy*dy < (node.r * 4) * (node.r * 4)) { clickedNode = node; break; }
             }
-
-            if (clickedNode) {
-                openNode(clickedNode);
-            } else if (activeNode) {
-                closeModal();
-            }
+            if (clickedNode) openNode(clickedNode); else if (activeNode) closeModal();
         }
 
         function openNode(node) {
@@ -735,144 +673,105 @@
             const targetScale = 2.5;
             const targetX = width / 2 - node.x * targetScale;
             const targetY = height / 2 - node.y * targetScale;
-
-            d3.select(canvas).transition().duration(800)
-                .call(zoomBehavior.transform, d3.zoomIdentity.translate(targetX, targetY).scale(targetScale));
+            d3.select(canvas).transition().duration(800).call(zoomBehavior.transform, d3.zoomIdentity.translate(targetX, targetY).scale(targetScale));
 
             const modal = document.getElementById('chat-modal');
-            const title = document.getElementById('modal-title');
-            const date = document.getElementById('modal-date');
             const scrollArea = document.getElementById('chat-scroll-area');
-
-            title.innerText = node.title;
-            date.innerText = new Date(node.date * 1000).toLocaleString();
+            document.getElementById('modal-title').innerText = node.title;
+            document.getElementById('modal-date').innerText = new Date(node.date * 1000).toLocaleString();
             
-            // 传递该节点绑定的名字
             renderChatContent(node.chatData, scrollArea, node.customAIName, node.customUserName);
-            
-            // 同步 Toggle UI 状态
             document.getElementById('name-toggle').checked = isNameVisible;
             toggleNames(isNameVisible);
-
             modal.classList.add('active');
-            
-            document.getElementById('toolbar').style.opacity = '0';
+            toolbar.style.opacity = '0';
         }
 
         function closeModal() {
             document.getElementById('chat-modal').classList.remove('active');
-            activeNode = null;
-            targetNode = null; // 清除高亮
-            document.getElementById('toolbar').style.opacity = '1';
+            activeNode = null; targetNode = null;
+            toolbar.style.opacity = '1';
         }
 
-        // --- 搜索逻辑 ---
         document.getElementById('search-box').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const term = e.target.value.toLowerCase();
                 if (!term) return;
-
                 const match = nodes.find(n => n.title.toLowerCase().includes(term));
                 if (match) {
                     targetNode = match;
                     const searchScale = 3.5; 
                     const targetX = width / 2 - match.x * searchScale;
                     const targetY = height / 2 - match.y * searchScale;
-
-                    d3.select(canvas).transition().duration(1200).ease(d3.easeCubicOut)
-                        .call(zoomBehavior.transform, d3.zoomIdentity.translate(targetX, targetY).scale(searchScale));
-                } else {
-                    e.target.style.borderColor = 'red';
-                    setTimeout(() => e.target.style.borderColor = 'var(--text-secondary)', 500);
+                    d3.select(canvas).transition().duration(1200).call(zoomBehavior.transform, d3.zoomIdentity.translate(targetX, targetY).scale(searchScale));
                 }
             }
         });
 
-        // --- 名字显示切换 ---
         function toggleNames(checked) {
             isNameVisible = checked;
             const area = document.getElementById('chat-scroll-area');
-            if(checked) {
-                area.classList.remove('hide-names');
-            } else {
-                area.classList.add('hide-names');
-            }
+            if(checked) area.classList.remove('hide-names'); else area.classList.add('hide-names');
         }
 
-        // --- 聊天渲染 ---
         function renderChatContent(chat, container, aiName, userName) {
             container.innerHTML = '';
-            
-            let messages = [];
-
-            // 1. ChatGPT 结构解析 (树状结构)
-            if (chat.mapping) {
-                let currentNode = chat.current_node;
-                
-                while (currentNode) {
-                    const node = chat.mapping[currentNode];
-                    if (node && node.message) {
-                        const role = node.message.author.role;
-                        if (node.message.content && node.message.content.parts && node.message.content.parts.length > 0) {
+            try {
+                let messages = [];
+                // 1. GPT 逻辑
+                if (chat.mapping) {
+                    let currentNode = chat.current_node;
+                    while (currentNode) {
+                        const node = chat.mapping[currentNode];
+                        if (node && node.message && node.message.content && node.message.content.parts) {
+                            const role = node.message.author.role;
                             const rawText = node.message.content.parts.join('\n');
                             if (rawText.trim() !== '' && (role === 'user' || role === 'assistant')) {
                                 messages.unshift({ role, content: rawText });
                             }
                         }
+                        currentNode = node ? node.parent : null;
                     }
-                    currentNode = node ? node.parent : null;
+                } 
+                // 2. Claude 逻辑 (兼容不同版本标识)
+                else {
+                    const msgs = chat.chat_messages || chat.messages;
+                    if (msgs && Array.isArray(msgs)) {
+                        messages = msgs.map(msg => {
+                            // Claude 导出中，发送者可能是 'human'/'assistant' 或 'user'/'assistant'
+                            let role = (msg.sender === 'assistant' || msg.author?.role === 'assistant') ? 'assistant' : 'user';
+                            let text = msg.text || (msg.content?.[0]?.text) || "";
+                            return { role, content: text };
+                        }).filter(m => m.content && m.content.trim() !== '');
+                    }
                 }
-            } 
-            // 2. Claude 结构解析 (线性列表)
-            else if (chat.chat_messages) {
-                messages = chat.chat_messages.map(msg => {
-                    let role = 'user';
-                    // Claude 的 sender 只有 'human' 和 'assistant'
-                    if (msg.sender === 'assistant') role = 'assistant';
-                    
-                    return {
-                        role: role,
-                        content: msg.text || ""
-                    };
-                }).filter(m => m.content && m.content.trim() !== '');
-            }
 
-            if (messages.length === 0) {
-                container.innerHTML = `<div class="text-center opacity-50 mt-10">NO TEXT CONTENT FOUND</div>`;
-                return;
-            }
+                if (messages.length === 0) {
+                    container.innerHTML = `<div class="text-center opacity-30 mt-20">No conversation found in this star.</div>`;
+                    return;
+                }
 
-            messages.forEach(msg => {
-                const row = document.createElement('div');
-                row.className = `message-row ${msg.role}`;
-                
-                const dot = document.createElement('div');
-                dot.className = 'role-dot';
-
-                // 新的容器结构
-                const containerDiv = document.createElement('div');
-                containerDiv.className = 'message-container';
-
-                // 名字 Div
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'message-name';
-                nameDiv.innerText = msg.role === 'assistant' ? aiName : userName;
-
-                // 内容 Div
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'message-content markdown-body';
-                contentDiv.innerHTML = marked.parse(msg.content);
-
-                containerDiv.appendChild(nameDiv);
-                containerDiv.appendChild(contentDiv);
-
-                row.appendChild(dot);
-                row.appendChild(containerDiv);
-                
-                container.appendChild(row);
-            });
-            
-            container.querySelectorAll('a').forEach(a => a.target = '_blank');
+                messages.forEach(msg => {
+                    const row = document.createElement('div');
+                    row.className = `message-row ${msg.role}`;
+                    const dot = document.createElement('div');
+                    dot.className = 'role-dot';
+                    const containerDiv = document.createElement('div');
+                    containerDiv.className = 'message-container';
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'message-name';
+                    nameDiv.innerText = msg.role === 'assistant' ? aiName : userName;
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'message-content markdown-body';
+                    contentDiv.innerHTML = marked.parse(msg.content);
+                    containerDiv.appendChild(nameDiv);
+                    containerDiv.appendChild(contentDiv);
+                    row.appendChild(dot);
+                    row.appendChild(containerDiv);
+                    container.appendChild(row);
+                });
+                container.querySelectorAll('a').forEach(a => a.target = '_blank');
+            } catch (err) { container.innerHTML = `<div class="text-center text-red-400 mt-10">Render error: ${err.message}</div>`; }
         }
 
         function toggleTheme() {
@@ -881,11 +780,10 @@
             const icon = document.getElementById('theme-icon');
             icon.setAttribute('data-lucide', currentTheme === 'day' ? 'moon' : 'sun');
             lucide.createIcons();
-            if(activeNode === null) renderLoop(); 
+            if(!activeNode) renderLoop(); 
         }
 
         init();
     </script>
 </body>
 </html>
-

@@ -68,3 +68,5 @@ Styling: Tailwind CSS via CDN
 
 Markdown: Marked.js
 
+注：此网页仅用于纪念与回忆
+

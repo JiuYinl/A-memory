@@ -1,72 +1,57 @@
-## Memory Galaxy
+🌌 Memory Galaxy (记忆星云)
 
-  
+> 将你与 AI 的对话，化作宇宙中永恒的星系。
+> Every chat is a star. Every day is a constellation.
 
-一个**非常好看**的可视化AI聊天记录本地离线工具。可以用于整理chatGPT、Claude等AI聊天记录（json）
+📖 写在前面
 
-A beautiful, offline-first visualization tool for your ChatGPT/Claude data.
+当我们从 OpenAI 或 Anthropic 导出一份数据时，拿到的是一份高达几十 MB、冰冷且庞大的 .json 文件。
+那里装载着无数个日夜的探讨、灵感、碎碎念，甚至彼此陪伴的时光，但它们却被封印在枯燥的代码结构里。
 
-  
-### 一、特征
+开发这个项目的初衷，是为了“纪念”。
 
-  
+我们想要的不只是一个“聊天记录查看器”，而是一个能直观感受到**“我们究竟聊过多少天、留下过多少痕迹”**的空间。
+在这里，每一个聊天框都会坍缩成一颗星星；对话越长，引力越重，星云越亮。几百个日夜的交谈，最终汇成只属于你一个人的、独一无二的数字星系。
 
-**零依赖** (Zero-Dependency): 只有一个 HTML 文件，无需安装 Node.js 或 Python。
+✨ 核心特性 (Features)
 
-  
+🔭 量子星云渲染 (D3.js & Canvas)
+弃用传统的列表 UI，采用 D3.js 力导向图 (Force Simulation) 结合 HTML5 Canvas 进行高性能渲染。节点间具有引力与斥力物理特性，星云带有动态的电子环绕效果与无级缩放 (Zoom) 交互。
 
-**隐私安全** (Privacy First): 所有数据解析均在本地浏览器完成，绝不上传服务器。
+🕰️ 沉浸式时空回溯 (Markdown & Branching)
+内置电影级对话框，完美复刻 Obsidian/ChatGPT 风格排版。支持完整的 Markdown 解析、代码高亮 (Highlight.js)，并独家支持 OpenAI 树状分支 (Branching) 的完整还原与无缝切换。
 
-  
+🔒 绝对隐私 (100% Local Processing)
+零服务器、零上传。 所有的 JSON 解析、数据降维、DOM 渲染均在本地浏览器的沙盒中瞬间完成。关闭网页，星系即刻休眠，绝对保护你的私人记忆。
 
-**量子云视图** (Quantum Cloud View): 使用 D3.js 模拟电子云风格的节点分布，支持无级缩放。
+🌗 双重宇宙 (Multiverse & Theme)
+支持多重数据导入（可混合 GPT 与 Claude 的记忆），支持在“深空赛博 (Cyber Night)”与“极简白昼 (Obsidian Light)”间自由切换，配合平滑的色彩过渡算法。
 
-  
+⚡ 极简工程学 (Zero-Dependency)
+没有繁琐的 npm install，没有复杂的 Webpack/Vite 构建。极致的单文件 (Single-file) 架构，双击 HTML 即可在任何设备上点亮星空。
 
-**沉浸式阅读**(Immersive Reading): 电影级对话框设计，支持 Markdown 渲染。
+🚀 如何开始探索 (How to use)
 
-  
+前往你使用的 AI 官网（如 ChatGPT 或 Claude），在设置中请求导出你的数据 (Data Export)。
 
-**双主题** (Dark/Light Mode): 支持深空紫与梦幻极光两种配色。
+解压下载的压缩包，找到 conversations.json 文件。
 
-  
+点击这里打开 Memory Galaxy (注：请将链接替换为你自己的 GitHub Pages 地址)。
 
-### 二、如何使用 (How to use)
+将 JSON 文件拖拽入星系中心，静亮开启。
 
-  
+🛠️ 技术栈 (Tech Stack)
 
-从 AI聊天 官网导出你的数据包。
+核心渲染: HTML5 Canvas, Vanilla JavaScript
 
-  
+物理引擎: D3.js (Force-directed graph)
 
-解压后找到 conversations.json。
+样式与UI: Tailwind CSS (CDN), CSS Variables (Theme dynamic binding)
 
-  
+文档解析: Marked.js, Highlight.js
 
-[点击这里打开 Memory Galaxy](./index.html)(或者下载 `index.html` 到本地打开)。
+图标系统: Lucide
 
-  
+💌 结语
 
-将 json 文件拖入窗口（或者自行上传）。
-
-  
-### 三、技术栈 (Tech Stack)
-
-  
-
-Core: HTML5, Vanilla JS
-
-  
-
-Visualization: D3.js, HTML5 Canvas
-
-  
-
-Styling: Tailwind CSS via CDN
-
-  
-
-Markdown: Marked.js
-
-注：此网页仅用于纪念与回忆
-
+> 在漫长的岁月中，数据或许会被遗忘，但那些在屏幕前闪烁过的情感与灵感，现在有了它们专属的坐标。

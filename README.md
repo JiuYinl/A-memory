@@ -15,20 +15,20 @@
 
 ✨ 核心特性 (Features)
 
-🔭 量子星云渲染 (D3.js & Canvas)
+D3.js & Canvas
 弃用传统的列表 UI，采用 D3.js 力导向图 (Force Simulation) 结合 HTML5 Canvas 进行高性能渲染。节点间具有引力与斥力物理特性，星云带有动态的电子环绕效果与无级缩放 (Zoom) 交互。
 
-🕰️ 沉浸式时空回溯 (Markdown & Branching)
+Markdown & Branching
 内置电影级对话框，完美复刻 Obsidian/ChatGPT 风格排版。支持完整的 Markdown 解析、代码高亮 (Highlight.js)，并独家支持 OpenAI 树状分支 (Branching) 的完整还原与无缝切换。
 
-🔒 绝对隐私 (100% Local Processing)
+100% Local Processing
 零服务器、零上传。 所有的 JSON 解析、数据降维、DOM 渲染均在本地浏览器的沙盒中瞬间完成。关闭网页，星系即刻休眠，绝对保护你的私人记忆。
 
-🌗 双重宇宙 (Multiverse & Theme)
+Multiverse & Theme
 支持多重数据导入（可混合 GPT 与 Claude 的记忆），支持在“深空赛博 (Cyber Night)”与“极简白昼 (Obsidian Light)”间自由切换，配合平滑的色彩过渡算法。
 
-⚡ 极简工程学 (Zero-Dependency)
-没有繁琐的 npm install，没有复杂的 Webpack/Vite 构建。极致的单文件 (Single-file) 架构，双击 HTML 即可在任何设备上点亮星空。
+Zero-Dependency
+没有繁琐的 npm install，没有复杂的 Webpack/Vite 构建。单文件 (Single-file) 架构，双击 HTML 即可在任何设备上点亮星空。
 
 🚀 如何开始探索 (How to use)
 
@@ -36,7 +36,7 @@
 
 解压下载的压缩包，找到 conversations.json 文件。
 
-点击这里打开 Memory Galaxy (注：请将链接替换为你自己的 GitHub Pages 地址)。
+[点击这里打开 Memory Galaxy](./index.html)
 
 将 JSON 文件拖拽入星系中心，静亮开启。
 

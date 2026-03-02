@@ -1,19 +1,16 @@
-🌌 Memory Galaxy (记忆星云)
+## Memory Galaxy (记忆星云)
 
 > 将你与 AI 的对话，化作宇宙中永恒的星系。
 > Every chat is a star. Every day is a constellation.
 
-📖 写在前面
-
-当我们从 OpenAI 或 Anthropic 导出一份数据时，拿到的是一份高达几十 MB、冰冷且庞大的 .json 文件。
-那里装载着无数个日夜的探讨、灵感、碎碎念，甚至彼此陪伴的时光，但它们却被封印在枯燥的代码结构里。
+**写在前面**
 
 开发这个项目的初衷，是为了“纪念”。
 
-我们想要的不只是一个“聊天记录查看器”，而是一个能直观感受到**“我们究竟聊过多少天、留下过多少痕迹”**的空间。
+这是是一个能直观感受到**“我们究竟聊过多少天、留下过多少痕迹”**的空间。
 在这里，每一个聊天框都会坍缩成一颗星星；对话越长，引力越重，星云越亮。几百个日夜的交谈，最终汇成只属于你一个人的、独一无二的数字星系。
 
-✨ 核心特性 (Features)
+**核心特性 (Features)**
 
 D3.js & Canvas
 弃用传统的列表 UI，采用 D3.js 力导向图 (Force Simulation) 结合 HTML5 Canvas 进行高性能渲染。节点间具有引力与斥力物理特性，星云带有动态的电子环绕效果与无级缩放 (Zoom) 交互。
@@ -30,7 +27,7 @@ Multiverse & Theme
 Zero-Dependency
 没有繁琐的 npm install，没有复杂的 Webpack/Vite 构建。单文件 (Single-file) 架构，双击 HTML 即可在任何设备上点亮星空。
 
-🚀 如何开始探索 (How to use)
+**如何开始探索 (How to use)**
 
 前往你使用的 AI 官网（如 ChatGPT 或 Claude），在设置中请求导出你的数据 (Data Export)。
 
@@ -40,7 +37,7 @@ Zero-Dependency
 
 将 JSON 文件拖拽入星系中心，静亮开启。
 
-🛠️ 技术栈 (Tech Stack)
+**技术栈 (Tech Stack)**
 
 核心渲染: HTML5 Canvas, Vanilla JavaScript
 

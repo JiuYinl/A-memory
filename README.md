@@ -52,3 +52,7 @@ Zero-Dependency
 💌 结语
 
 > 在漫长的岁月中，数据或许会被遗忘，但那些在屏幕前闪烁过的情感与灵感，现在有了它们专属的坐标。
+<img width="1057" height="845" alt="屏幕截图 2026-03-02 175316" src="https://github.com/user-attachments/assets/bbaf0ebb-bd31-4ced-9799-725e6bcba3e0" />
+
+
+<img width="2522" height="1394" alt="屏幕截图 2026-03-02 175340" src="https://github.com/user-attachments/assets/b8cf4d4d-4cd8-4a7f-ac4b-12e38d03e97f" />
